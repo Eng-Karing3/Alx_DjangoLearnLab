@@ -5,7 +5,9 @@ from .models import Library
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import  UserCreationForm
+
 
 # Login view
 def user_login(request):
