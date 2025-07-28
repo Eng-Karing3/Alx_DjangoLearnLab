@@ -11,6 +11,8 @@ def book_list(request):
 from django.shortcuts import render
 from .models import Book
 from django.db.models import Q
+from .forms import ExampleForm
+
 
 def book_list(request):
     query = request.GET.get('q', '')
