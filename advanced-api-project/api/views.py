@@ -1,40 +1,58 @@
 from rest_framework import generics, permissions
 from rest_framework.exceptions import PermissionDenied
 from .models import Book
-from .serializers import BookSerializer, BookDetailSerializer
+from .serializers import BookSerializer
 
-
-# List and Create Books
-class BookListCreateView(generics.ListCreateAPIView):
+# ListView: Retrieve all books (Public)
+class ListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [permissions.AllowAny]
 
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [permissions.AllowAny()]  # Anyone can list books
-        return [permissions.IsAuthenticated()]  # Create requires login
+
+# DetailView: Retrieve a single book by ID (Public)
+class DetailView(generics.RetrieveAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+# CreateView: Add a new book (Authenticated users only)
+class CreateView(generics.CreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Here you could validate or modify data before saving
-        if not serializer.validated_data.get('title'):
-            raise PermissionDenied("Title is required.")
-        serializer.save()  # Save book as provided
+        """
+        Automatically attach the current user's author profile to the book.
+        Adjust this logic if Author is not linked to User.
+        """
+        serializer.is_valid(raise_exception=True)
+        serializer.save(author=self.request.user.author)
 
 
-# Retrieve, Update, and Delete a single Book
-class BookRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+# UpdateView: Modify an existing book (Only the author can update)
+class UpdateView(generics.UpdateAPIView):
     queryset = Book.objects.all()
-    serializer_class = BookDetailSerializer
-
-    def get_permissions(self):
-        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
-            return [permissions.IsAuthenticated()]  # Only logged-in users can update/delete
-        return [permissions.AllowAny()]  # Anyone can view a book
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_update(self, serializer):
-        # Example: reject updates with empty title
-        if not serializer.validated_data.get('title'):
-            raise PermissionDenied("Book title cannot be empty.")
+        book = self.get_object()
+        if book.author != self.request.user.author:
+            raise PermissionDenied("You do not have permission to edit this book.")
+        serializer.is_valid(raise_exception=True)
         serializer.save()
 
-# Create your views here.
+
+# DeleteView: Remove a book (Only the author can delete)
+class DeleteView(generics.DestroyAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_destroy(self, instance):
+        if instance.author != self.request.user.author:
+            raise PermissionDenied("You do not have permission to delete this book.")
+        instance.delete()
