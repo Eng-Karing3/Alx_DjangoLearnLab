@@ -17,6 +17,7 @@ class ListView(generics.ListAPIView):
     search_fields = ['title', 'author__name', 'publication_year']
     ordering_fields = ['title', 'publication_year']
     ordering = ['title']
+    filterset_fields = ['author']
 
 
 # Retrieve details of a single book

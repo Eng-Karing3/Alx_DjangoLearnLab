@@ -5,7 +5,7 @@ class Author(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=200)
-    publication_year = models.DateField()
+    publication_year = models.IntegerField()
     author = models.ForeignKey(Author, related_name='books', on_delete=models.CASCADE)
 
 # models.py# This file contains the definitions for the Author and Book models.

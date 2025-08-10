@@ -1,19 +1,12 @@
-from .models import Author, Book
 from rest_framework import serializers
-
-
-
-class BookSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Book
-        fields = ['id', 'title', 'publication_date']
-
+from .models import Author, Book
 
 class AuthorSerializer(serializers.ModelSerializer):
-    books = BookSerializer(many=True, read_only=True)
+    books = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
     class Meta:
         model = Author
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'books']
 
     def validate_name(self, value):
         if len(value.strip()) < 3:
@@ -24,11 +17,11 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer(read_only=True)
+    author = serializers.PrimaryKeyRelatedField(queryset=Author.objects.all())
 
     class Meta:
         model = Book
-        fields = ['id', 'title', 'publication_date', 'author']
+        fields = ['id', 'title', 'publication_year', 'author']
 
     def validate_title(self, value):
         if len(value.strip()) < 3:
