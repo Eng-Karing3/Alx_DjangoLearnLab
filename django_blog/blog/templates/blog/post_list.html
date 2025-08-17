@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Post_list</title>
+  </head>
+  <body>
+    {% extends "base.html" %} {% block content %}
+    <h2>All Blog Posts</h2>
+    <a href="{% url 'post-create' %}">+ New Post</a>
+    <ul>
+      {% for post in posts %}
+      <li>
+        <a href="{% url 'post-detail' post.pk %}">{{ post.title }}</a>
+        <small
+          >by {{ post.author.username }} on {{ post.published_date }}</small
+        >
+      </li>
+      {% empty %}
+      <p>No posts yet.</p>
+      {% endfor %}
+    </ul>
+    {% endblock %}
+  </body>
+</html>
