@@ -1,44 +1,29 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+body { 
+    font-family: system-ui, -apple-system, Roboto, Arial, sans-serif;
+    margin: 2rem;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
+.nav a {
+    margin-right: 1rem; text-decoration: none;
 }
-
-header {
-    background-color: #333;
-    padding: 10px;
-    text-align: center;
+.messages {
+    list-style: none; padding: 0;
 }
-
-header nav ul {
-    list-style-type: none;
+.messages li { 
+    padding: .5rem .75rem; margin: .5rem 0; border-radius: 6px;
 }
-
-header nav ul li {
-    display: inline;
-    margin: 0 15px;
+.messages li.success {
+    background: #e6ffed;
 }
-
-header nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
+.messages li.error {
+     background: #ffe6e6;
 }
-
-.content {
-    margin: 20px;
+main {
+    margin-top: 1.5rem;
 }
-
-footer {
-    text-align: center;
-    margin-top: 50px;
-    padding: 10px;
-    background-color: #333;
-    color: white;
+form fieldset { 
+    border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem;
+}
+button {
+    padding: .6rem 1rem; cursor: pointer;
 }
