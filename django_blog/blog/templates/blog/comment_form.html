@@ -3,19 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>post-delete</title>
+    <title>comment_form</title>
   </head>
   <body>
     {% extends "base.html" %} {% block content %}
-    <h2>Delete Post</h2>
-    <p>Are you sure you want to delete "{{ object.title }}"?</p>
+    <h2>Add Comment</h2>
     <form method="post">
-      {% csrf_token %}
-      <button type="submit">Yes, delete</button>
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Submit</button>
     </form>
-    <a href="{% url 'post-detail' object.pk %}">Cancel</a>
     {% endblock %}
   </body>
 </html>
-
-
