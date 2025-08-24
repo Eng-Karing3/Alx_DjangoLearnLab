@@ -1,21 +1,27 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):
-    followers_count = serializers.IntegerField(read_only=True)
-    following_count = serializers.IntegerField(read_only=True)
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['bio', 'profile_picture']
 
+
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'id', 'username', 'email', 'bio', 'profile_picture',
-            'followers', 'followers_count', 'following_count'
+            'id',
+            'username',
+            'email',
+            'bio',
+            'profile_picture',
+            'followers',
         ]
-        read_only_fields = ['followers', 'followers_count', 'following_count']
-
+        read_only_fields = ['followers']
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=6)
@@ -25,17 +31,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password']
 
     def create(self, validated_data):
+        # Use create_user to hash the password properly
         user = User.objects.create_user(
             username=validated_data['username'],
             email=validated_data.get('email'),
-            password=validated_data['password'],
+            password=validated_data['password']
         )
-        # Create auth token on sign-up
+        # Automatically create a token for the user
         Token.objects.create(user=user)
         return user
-
-
-class ProfileUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['email', 'bio', 'profile_picture']
